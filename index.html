@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BrainDigits Pro</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #020617;
+  color: white;
+}
+
+h1 {
+  color: #22c55e;
+}
+
+.game-box {
+  margin: 40px auto;
+  padding: 25px;
+  width: 320px;
+  background: #0f172a;
+  border-radius: 12px;
+}
+
+input {
+  padding: 10px;
+  width: 80%;
+  margin-top: 10px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #22c55e;
+  border: none;
+  cursor: pointer;
+}
+
+.stats {
+  margin-top: 15px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🧠 BrainDigits PRO</h1>
+<p>Solve fast before time runs out!</p>
+
+<div class="game-box">
+  <h2 id="question">Loading...</h2>
+
+  <input type="number" id="answer" placeholder="Answer">
+  <br>
+  <button onclick="checkAnswer()">Submit</button>
+
+  <div class="stats">
+    ⏱ Time: <span id="time">10</span>s <br>
+    🏆 Score: <span id="score">0</span> <br>
+    📈 Level: <span id="level">1</span> <br>
+    🔥 High Score: <span id="highScore">0</span>
+  </div>
+</div>
+
+<script>
+let num1, num2;
+let score = 0;
+let level = 1;
+let timeLeft = 10;
+let timer;
+
+let highScore = localStorage.getItem("highScore") || 0;
+document.getElementById("highScore").innerText = highScore;
+
+function generateQuestion() {
+  num1 = Math.floor(Math.random() * (10 * level));
+  num2 = Math.floor(Math.random() * (10 * level));
+  document.getElementById("question").innerText = num1 + " + " + num2;
+}
+
+function startTimer() {
+  clearInterval(timer);
+  timeLeft = 10;
+  document.getElementById("time").innerText = timeLeft;
+
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("time").innerText = timeLeft;
+
+    if (timeLeft === 0) {
+      alert("⛔ Time's up! Game Over");
+      resetGame();
+    }
+  }, 1000);
+}
+
+function checkAnswer() {
+  let userAnswer = document.getElementById("answer").value;
+
+  if (parseInt(userAnswer) === num1 + num2) {
+    score++;
+    if (score % 5 === 0) level++;
+
+    document.getElementById("score").innerText = score;
+    document.getElementById("level").innerText = level;
+
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem("highScore", highScore);
+      document.getElementById("highScore").innerText = highScore;
+    }
+  } else {
+    alert("❌ Wrong Answer!");
+  }
+
+  document.getElementById("answer").value = "";
+  generateQuestion();
+  startTimer();
+}
+
+function resetGame() {
+  score = 0;
+  level = 1;
+  document.getElementById("score").innerText = score;
+  document.getElementById("level").innerText = level;
+  generateQuestion();
+  startTimer();
+}
+
+generateQuestion();
+startTimer();
+</script>
+
+</body>
+</html>
